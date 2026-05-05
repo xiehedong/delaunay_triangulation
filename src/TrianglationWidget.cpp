@@ -47,14 +47,16 @@ void TrianglationWidget::generateRadomPoints(int count)
         double y = gen->bounded(50, curWidgetHeight - 50);
         m_points.emplace_back(x, y);
     }
-    m_triangulation.clear();
-    m_triangulation.insert(m_points.begin(), m_points.end());
+
     m_paintType = PaintType::Point;
     update();
 }
 
 void TrianglationWidget::doTrianglation()
 {
+    m_triangulation.clear();
+    m_triangulation.insert(m_points.begin(), m_points.end());
+
     m_paintType = PaintType::Delaunay;
     update();
 }
@@ -69,17 +71,15 @@ void TrianglationWidget::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
+    painter.fillRect(rect(), Qt::white);
     switch (m_paintType)
     {
     case PaintType::Clear:
-        painter.fillRect(rect(), Qt::white);
         break;
     case PaintType::Point:
-        painter.fillRect(rect(), Qt::white);
         drawPoints(painter);
         break;
     case PaintType::Delaunay:
-        painter.fillRect(rect(), Qt::white);
         drawDelaunay(painter);
         drawPoints(painter);
         break;
@@ -96,7 +96,6 @@ void TrianglationWidget::drawPoints(QPainter& painter)
     {
         painter.drawEllipse(QPointF(p.x(), p.y()), 3, 3);
     }
-    //m_paintType = PaintType::Invalid;
 }
 
 void TrianglationWidget::drawDelaunay(QPainter& painter)
@@ -114,5 +113,4 @@ void TrianglationWidget::drawDelaunay(QPainter& painter)
         auto p2 = segment.point(1);
         painter.drawLine(QPointF(p1.x(), p1.y()), QPointF(p2.x(), p2.y()));
     }
-    //m_paintType = PaintType::Invalid;
 }
